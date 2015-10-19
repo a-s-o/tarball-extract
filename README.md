@@ -21,7 +21,7 @@ const promise = tarball.extractTarball(archive, dest);
 1. sourceFile (String) - path to a `.tar` or `.tar.gz` archive
 2. destination (String) - path to target directory for extracted contents
 3. options (Object) - Object containing options to be passed to the node-tar's `Extract` method. Currently supported options are:
-   * strip (String): Number of path segments to strip from the root when extracting (Defaults to 0)
+   * [strip=0] (Number): Number of path segments to strip from the root when extracting
 
 #### Returns
 
@@ -45,9 +45,9 @@ const promise = tarball.extractTarballDownload(url , fileName, extractionDest);
 2. downloadFile (String) - path (including name) of downloaded tarball; ex: `/tmp/testfile.tar.gz`
 3. destination (String) - path to target directory for extracted contents
 4. options (Object)
-   * tar (Object) - supported options:
-      * split (Number) Number of path segments to strip from the root when extracting (Defaults to 0)
    * wget (Object) - See `wget-improved` npm page for options
+   * tar (Object) - supported options:
+      * [strip=0] (Number) Number of path segments to strip from the root when extracting
 
 #### Returns
 
