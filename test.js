@@ -11,4 +11,4 @@ function testDownload () {
    );
 }
 
-testDownload.then((result) => console.log(result));
+testDownload().then((result) => console.log(result));
