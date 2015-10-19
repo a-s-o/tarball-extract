@@ -7,11 +7,13 @@
   "main": "tarball.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/joshuah/sol-redis-pool.git"
+    "url": "git://github.com/a-s-o/tarball-extract.git"
   },
 	"dependencies" : {
     "tar" : "*",
-		"wget" : "*"
+	 "wget" : "*"
   },
-  "engines": { "node": ">= 0.8.0" }
+  "engines": {
+     "node": ">= 4.1.0"
+  }
 }
