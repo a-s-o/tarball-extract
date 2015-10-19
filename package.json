@@ -1,19 +1,22 @@
 {
   "name": "tarball-extract",
   "description": "A simple tarball download and extraction lib for node.",
-  "version": "0.0.2",
+  "version": "1.0.0",
   "author": "Joshua Heiks <joshuaheiks@gmail.com>",
-  "keywords": ["tar", "tarball"],
+  "keywords": [
+    "tar",
+    "tarball"
+  ],
   "main": "tarball.js",
   "repository": {
     "type": "git",
     "url": "git://github.com/a-s-o/tarball-extract.git"
   },
-	"dependencies" : {
-    "tar" : "*",
-	 "wget" : "*"
+  "dependencies": {
+    "tar": "*",
+    "wget": "*"
   },
   "engines": {
-     "node": ">= 4.1.0"
+    "node": ">= 4.1.0"
   }
 }
