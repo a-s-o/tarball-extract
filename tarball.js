@@ -1,23 +1,13 @@
 'use strict';
 
+const Bluebird = require('bluebird');
 const fs = require('fs');
 const tar = require('tar');
 const zlib = require('zlib');
-const wget = require('wget');
+const wget = require('wget-improved');
 
 function extractTarball (sourceFile, destination) {
-   let options;
-   let callback;
-   if (typeof arguments[3] === 'function') {
-      callback = arguments[3];
-      options = arguments[2] || {};
-   } else {
-      callback = arguments[2] || function noop () {};
-      options = {};
-   }
-
-   function callbackError (err) { callback(err); }
-   function callbackNull () { callback(null); }
+   const options = arguments[2] || {};
 
    const extractionOpts = {
       // num of path segments to strip from the root when extracting
@@ -25,50 +15,47 @@ function extractTarball (sourceFile, destination) {
       path: destination
    };
 
-   if (/(gz|tgz)$/i.test(sourceFile)) {
-      // This file is gzipped, use zlib to deflate the stream before passing to tar.
-      fs.createReadStream(sourceFile)
-         .pipe(zlib.createGunzip())
-         .pipe(tar.Extract(extractionOpts))
-         .on('error', callbackError)
-         .on('end', callbackNull);
-   } else {
-      // This file is not gzipped, just deflate it.
-      fs.createReadStream(sourceFile)
-         .pipe(tar.Extract(extractionOpts))
-         .on('error', callbackError)
-         .on('end', callbackNull);
-   }
+   return new Bluebird(function exec (resolve, reject) {
+      if (/(gz|tgz)$/i.test(sourceFile)) {
+         // This file is gzipped, use zlib to
+         // deflate the stream before passing to tar.
+         fs.createReadStream(sourceFile)
+            .pipe(zlib.createGunzip())
+            .pipe(tar.Extract(extractionOpts))
+            .on('error', reject)
+            .on('end', resolve);
+      } else {
+         // This file is not gzipped, just deflate it.
+         fs.createReadStream(sourceFile)
+            .pipe(tar.Extract(extractionOpts))
+            .on('error', reject)
+            .on('end', resolve);
+      }
+   });
 }
 
 function extractTarballDownload (url, downloadFile, destination) {
-   let options;
-   let callback;
-   if (typeof arguments[4] === 'function') {
-      callback = arguments[4];
-      options = arguments[3] || {};
-   } else {
-      callback = arguments[3] || function noop () {};
-      options = {};
+   const options = arguments[3] || {};
+
+   function startExtraction (output) {
+      return extractTarball(output, destination, options.tar || {});
    }
 
-   function extractionComplete (err) {
-      callback(err, {
+   function startDownload (resolve, reject) {
+      // Start download
+      const download = wget.download(url, downloadFile, options.wget || {});
+      download.on('error', reject);
+      download.on('progress', reportProgress());
+      download.on('end', resolve);
+   }
+
+   return new Bluebird(startDownload)
+      .then(startExtraction)
+      .then(() => ({
          url: url,
          downloadFile: downloadFile,
          destination: destination
-      });
-   }
-
-   function downloadComplete (output) {
-      extractTarball(output, destination, options.tar || {}, extractionComplete);
-   }
-
-   // Start download
-   const download = wget.download(url, downloadFile, options.wget || {});
-   download.on('error', callback);
-   download.on('progress', reportProgress());
-   download.on('end', downloadComplete);
+      }));
 }
 
 function reportProgress () {
@@ -82,5 +69,7 @@ function reportProgress () {
    };
 }
 
-exports.extractTarball = extractTarball;
-exports.extractTarballDownload = extractTarballDownload;
+module.exports = {
+   extractTarball,
+   extractTarballDownload
+};
