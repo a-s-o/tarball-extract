@@ -1,7 +1,7 @@
 {
   "name": "tarball-extract",
   "description": "A simple tarball download and extraction lib for node.",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": "Joshua Heiks <joshuaheiks@gmail.com>",
   "keywords": [
     "tar",
