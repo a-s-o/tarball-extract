@@ -34,11 +34,11 @@ function extractTarball (sourceFile, destination) {
    });
 }
 
-function extractTarballDownload (url, downloadFile, destination) {
+function extractTarballDownload (url, downloadFile, destinationDir) {
    const options = arguments[3] || {};
 
-   function startExtraction (output) {
-      return extractTarball(output, destination, options.tar || {});
+   function startExtraction () {
+      return extractTarball(downloadFile, destinationDir, options.tar || {});
    }
 
    function startDownload (resolve, reject) {
@@ -54,7 +54,7 @@ function extractTarballDownload (url, downloadFile, destination) {
       .then(() => ({
          url: url,
          downloadFile: downloadFile,
-         destination: destination
+         destination: destinationDir
       }));
 }
 
